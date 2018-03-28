@@ -11,16 +11,16 @@ public:
     entropy = Userentropy;
     mnemonic = wallet::create_mnemonic(entropy);
     seed = to_chunk(wallet::decode_mnemonic(mnemonic));
-    // privateKey = wallet::hd_private(seed);  // mainnet
-    privateKey = wallet::hd_private(seed, wallet::hd_private::testnet); // testnet
+    privateKey = wallet::hd_private(seed);  // mainnet
+    // privateKey = wallet::hd_private(seed, wallet::hd_private::testnet); // testnet
     publicKey = privateKey.to_public();
   }
   // constructor for importing wallet
   HD_Wallet(const wallet::word_list mnemonicSeed) {
     seed = to_chunk(wallet::decode_mnemonic(mnemonicSeed));
     mnemonic = mnemonicSeed;
-    // privateKey = wallet::hd_private(seed); // mainnet
-    privateKey = wallet::hd_private(seed, wallet::hd_private::testnet); // testnet
+    privateKey = wallet::hd_private(seed); // mainnet
+    // privateKey = wallet::hd_private(seed, wallet::hd_private::testnet); // testnet
     publicKey = privateKey.to_public();
   }
 
@@ -30,8 +30,8 @@ public:
     pseudo_random_fill(entropy);
     mnemonic = wallet::create_mnemonic(entropy);
     seed = to_chunk(wallet::decode_mnemonic(mnemonic));
-    // privateKey = wallet::hd_private(seed); // mainnet
-    privateKey = wallet::hd_private(seed, wallet::hd_private::testnet); // testnet
+    privateKey = wallet::hd_private(seed); // mainnet
+    // privateKey = wallet::hd_private(seed, wallet::hd_private::testnet); // testnet
     publicKey = privateKey.to_public();
   }
 
@@ -43,13 +43,14 @@ public:
     return privateKey.derive_public(index);
   }
   wallet::payment_address childAddress(int index) {
-    // return wallet::ec_public(childPublicKey(index).point()).to_payment_address(); // mainnet
-    return wallet::payment_address(wallet::ec_public(childPublicKey(index).point()), 0x6f); // testnet
+    return wallet::ec_public(childPublicKey(index).point()).to_payment_address(); // mainnet
+    // return wallet::payment_address(wallet::ec_public(childPublicKey(index).point()), 0x6f); // testnet
   }
 
   // display functions
   void displayPrivateKey() {
     std::cout << "\nPrivate Key: " << privateKey.encoded() << std::endl;
+    std::cout << "\nPrivate Key Lineage depth:" << privateKey.lineage.depth << std::endl;
   }
   void displayChildPrivateKey(int index) {
     std::cout << "\nChild Private Key: " << childPrivateKey(index).encoded() << std::endl;
@@ -66,6 +67,7 @@ public:
   void displayMnemonic() {
     if (wallet::validate_mnemonic(mnemonic)) {
       std::string mnemonicString = join(mnemonic);
+      std::cout << "Your mnemonic: " << std::endl;
       std::cout << std::endl << mnemonicString << std::endl;
     } else {
       std::cout << "mnemonic invalid!" << std::endl;

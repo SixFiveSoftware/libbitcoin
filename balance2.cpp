@@ -5,15 +5,10 @@
 
 using namespace bc;
 
-// uint64_t balancer(const chain::history::list& rows)
-uint64_t balancer(const auto& rows)
-{
+uint64_t balancer(const chain::history::list& rows) {
 		uint64_t unspent_balance = 0;
 
-		// for(const chain::history row: rows)
-    for (const auto& row: rows)
-		{
-
+		for(const chain::history row: rows) {
 		    // spend unconfirmed (or no spend attempted)
 		    if (row.spend.hash() == null_hash)
 		        unspent_balance += row.value;
@@ -21,8 +16,7 @@ uint64_t balancer(const auto& rows)
 		return unspent_balance;
 }
 
-void getBalance(wallet::payment_address address)
-{
+void getBalance(wallet::payment_address address) {
 	client::connection_type connection = {};
 	connection.retries = 3;
 	connection.timeout_seconds = 8;
@@ -30,38 +24,28 @@ void getBalance(wallet::payment_address address)
 
 	client::obelisk_client client(connection);
 
-
-	// static const auto on_done = [](const chain::history::list& rows)
-  static const auto on_done = [](const auto& rows)
-	{
+	// create callback handlers
+	static const auto on_done = [](const chain::history::list& rows) {
 		uint64_t balance = balancer(rows);
 		std::cout<< encode_base10(balance, 8) << std::endl;
-
 	};
 	static const auto on_error2 = [](const code ec) {
-
 		std::cout << "Error Code: " << ec.message() << std::endl;
-
 	};
 
-
-	if(!client.connect(connection))
-	{
+	// make connection
+	if(!client.connect(connection)) {
 		std::cout << "Fail" << std::endl;
 	} else {
 		std::cout << "Connection Succeeded" << std::endl;
 	}
 
+	// fetch history and wait
 	client.blockchain_fetch_history3(on_error2, on_done, address);
 	client.wait();
-
-
 }
 
-int main(){
-
+int main() {
 	wallet::payment_address addy("2Mz7rUJar8Ba2rNUynXYyx2PkaKseSjDTRZ");
 	getBalance(addy);
-
-
 }

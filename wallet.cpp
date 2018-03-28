@@ -85,10 +85,13 @@ int main() {
           index = getInput();
           wallet.displayChildPrivateKey(index);
         } else if (choice == 4) {
+          std::cout << "For wallet index..." << std::endl;
           index = getInput();
           wallet.displayAddress(index);
         } else if (choice == 5) {
+          std::cout << "For start number:" << std::endl;
           int start = getInput();
+          std::cout << "For end number:" << std::endl;
           int end = getInput();
           wallet.addressRange(start, end);
         } else if (choice == 6) {
