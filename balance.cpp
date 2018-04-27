@@ -5,6 +5,17 @@
 
 using namespace bc;
 
+uint64_t balancer(const chain::history::list& rows) {
+  uint64_t unspent_balance = 0;
+  for (const auto& row: rows) {
+    // spend unconfirmed (or no spend attempted)
+    if (row.spend.hash() == null_hash) {
+      unspent_balance += row.value;
+    }
+  }
+  return unspent_balance;
+}
+
 void getBalance(wallet::payment_address address) {
   client::connection_type connection = {};
   connection.retries = 3;
@@ -34,18 +45,10 @@ void getBalance(wallet::payment_address address) {
 
 }
 
-uint64_t balancer(const chain::history::list& rows) {
-  uint64_t unspent_balance = 0;
-  for (const auto& row: rows) {
-    // spend unconfirmed (or no spend attempted)
-    if (row.spend.hash() == null_hash) {
-      unspent_balance += row.value;
-    }
-  }
-  return unspent_balance;
-}
-
 int main() {
-  wallet::payment_address address("2Mz7rUJar8Ba2rNUynXYyx2PkaKseSjDTRZ");
+  //wallet::payment_address address("2Mz7rUJar8Ba2rNUynXYyx2PkaKseSjDTRZ");
+  // wallet::payment_address address("2N9epNsYCgaM4a1nwk782nMh1F4YE6ABL6u");
+  // wallet::payment_address address("2NAAEjA6c7V8o8WVhnfe977ZBu8SUY67bXW");
+  wallet::payment_address address("2N55gTU94EPR9xo9Fgixgzd5zCrErW8SJpm");
   getBalance(address);
 }
